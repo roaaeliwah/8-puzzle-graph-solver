@@ -11,7 +11,7 @@ def a_star_search(initial_state, heuristic_func):
     start_node = Node(state=initial_state, parent=None, depth=0, g=0, action=None)
     
     frontier = []
-    tie_breaker = count() 
+    tie_breaker = count() # the older one wins
 
     start_h = heuristic_func(start_node.state)
     heapq.heappush(frontier, (start_node.g + start_h, next(tie_breaker), start_node))
@@ -36,6 +36,8 @@ def a_star_search(initial_state, heuristic_func):
             )
 
         nodes_expanded = nodes_expanded + 1
+        
+        #might be a better approach for the redundant nodes here
         
         for action, next_state in get_successors(current_node.state):
             new_g = current_node.g + 1 
