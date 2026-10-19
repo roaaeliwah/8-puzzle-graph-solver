@@ -1,3 +1,5 @@
+from core.node import Node
+from core.result import SearchResult
 
 def is_goal(state):
     goal = (0, 1, 2, 3, 4, 5, 6, 7, 8)

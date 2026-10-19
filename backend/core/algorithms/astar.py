@@ -5,9 +5,23 @@ from itertools import count
 
 from core.puzzle import Node, SearchResult, is_goal, get_successors
 
+# the 8 puzzle game is admissible and consistent and consistency 
+# means that once we explore a node from the priority queue then
+# if we found that node again we will not find a smaller g(n) than the one that we already found
+
 def a_star_search(initial_state, heuristic_func):
     start_time = time.time()
-
+    # he wants here to check the solvability before or not ? 
+    count2 = check_solvability(initial_state) 
+    if count2 % 2 == 1 :
+            return SearchResult(
+        solved=False,
+        path=None,
+        cost=0,
+        nodes_expanded=0,
+        max_depth=0,
+        running_time=time.time() - start_time
+    )
     start_node = Node(state=initial_state, parent=None, depth=0, g=0, action=None)
     
     frontier = []
@@ -70,3 +84,16 @@ def a_star_search(initial_state, heuristic_func):
         max_depth=max_depth,
         running_time=time.time() - start_time
     )
+    
+    
+def check_solvability (state):
+    inversions = 0 
+    for i in range (0,9) :
+        if state[i] == 0 :
+            continue
+        for j in range(i+1,9) :
+            if state[j] == 0 :
+                continue
+            if state[i] > state[j] :
+                inversions += 1
+    return inversions

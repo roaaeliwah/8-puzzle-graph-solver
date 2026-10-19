@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
