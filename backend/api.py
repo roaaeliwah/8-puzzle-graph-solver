@@ -6,6 +6,7 @@ from core.heuristic import compute_Manhattan, compute_euclidean
 from core.algorithms.astar import a_star_search
 from core.algorithms.dfs import dfs_search
 from core.algorithms.iddfs import iddfs_search
+from core.algorithms.bfs import bfs_search
 
 from enum import Enum
 
@@ -60,6 +61,8 @@ def run_algorithm(state, algorithm, heuristic):
         return dfs_search(state)
     if algorithm == Algorithm.iddfs:
         return iddfs_search(state)
+    if algorithm == Algorithm.bfs:
+        return bfs_search(state)
 
 
 

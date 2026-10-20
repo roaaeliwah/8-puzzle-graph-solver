@@ -11,7 +11,7 @@ from core.puzzle import Node, SearchResult, is_goal, get_successors, is_solvable
 
 def a_star_search(initial_state, heuristic_func):
     start_time = time.time()
-    # he wants here to check the solvability before or not ?
+
     if not is_solvable(initial_state):
             return SearchResult(
         solved=False,
