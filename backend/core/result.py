@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+# add a list of actions?
 @dataclass
 class SearchResult:
     solved: bool

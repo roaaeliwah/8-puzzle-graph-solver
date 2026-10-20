@@ -23,3 +23,18 @@ def get_successors(state):
             new_state = list(state)
             new_state[idx], new_state[neighbor_idx] = new_state[neighbor_idx], new_state[idx]
             yield action, tuple(new_state)  
+      
+def is_solvable(state):
+    inversions = 0 
+    for i in range (0,9) :
+        if state[i] == 0 :
+            continue
+        for j in range(i+1,9) :
+            if state[j] == 0 :
+                continue
+            if state[i] > state[j] :
+                inversions += 1
+
+    if inversions % 2 == 1:
+        return False
+    return True
