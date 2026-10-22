@@ -32,7 +32,9 @@ def depth_limited_search(initial_state, limit):
 
             if new_depth > max_depth:
                 max_depth = new_depth
-            if state not in best_depth or new_depth < best_depth[state]:       
+            if state not in best_depth or new_depth < best_depth[state]:
+                if new_depth > max_depth:
+                    max_depth = new_depth       
                 best_depth[state] = new_depth
                 stack.append(Node(state=state, parent=cur, depth=new_depth, g=cur.g+1, action=action))
     
