@@ -1,0 +1,76 @@
+<section class="panel board-panel" aria-label="Interactive board">
+  <aside class="setup-pane">
+    <div class="panel-heading">
+      <div><p class="eyebrow">Setup</p></div>
+    </div>
+    <label for="initial-state">Initial state (9 numbers, 0 = blank)</label>
+    <div class="input-row">
+      <input id="initial-state" type="text" [(ngModel)]="initialStateInput" [disabled]="disabled" placeholder="1,2,5,3,4,0,6,7,8" aria-describedby="initial-state-help initial-state-error" />
+      <button class="secondary-button" type="button" (click)="loadInitialState()" [disabled]="disabled">Load</button>
+    </div>
+    <small id="initial-state-help">Use spaces or commas.</small>
+    @if (inputError) { <small id="initial-state-error" class="input-error" role="alert">{{ inputError }}</small> }
+    <div class="header-actions">
+      <button class="secondary-button" type="button" (click)="shuffle()" [disabled]="disabled">Shuffle</button>
+      <button class="secondary-button" type="button" (click)="reset()" [disabled]="disabled">Reset</button>
+    </div>
+    <label>Algorithm
+      <select [(ngModel)]="algorithm" [disabled]="disabled">
+        <option value="bfs">BFS</option><option value="dfs">DFS</option><option value="iddfs">Iterative DFS</option><option value="astar">A*</option>
+      </select>
+    </label>
+    @if (algorithm === 'astar') {
+      <label>Heuristic (A*)
+        <select [(ngModel)]="heuristic" [disabled]="disabled">
+          <option value="manhattan">Manhattan</option><option value="euclidean">Euclidean</option>
+        </select>
+      </label>
+    }
+    <button class="primary-button full-width" type="button" (click)="submit()" [disabled]="disabled">Solve</button>
+    <button class="secondary-button full-width" type="button" (click)="compareHeuristics()" [disabled]="disabled">Run all</button>
+  </aside>
+
+  <div class="board-pane">
+    <div class="panel-heading"><div><p class="eyebrow">Board</p></div></div>
+    <div class="board" aria-label="8-puzzle board">
+      @for (tile of state; track $index) {
+        <button class="tile" [class.empty]="tile === 0" [class.slide-left]="slideClass($index) === 'slide-left'" [class.slide-right]="slideClass($index) === 'slide-right'" [class.slide-up]="slideClass($index) === 'slide-up'" [class.slide-down]="slideClass($index) === 'slide-down'" type="button" [attr.aria-label]="tileLabel(tile)" [disabled]="disabled || tile === 0"
+          (click)="move($index)" (keydown.arrowup)="move($index)" (keydown.arrowdown)="move($index)" (keydown.arrowleft)="move($index)" (keydown.arrowright)="move($index)">{{ tile || '' }}</button>
+      }
+    </div>
+    <div class="board-footer"><span>Moves: <strong>{{ moveCount }}</strong></span><span>Goal: <code>0 1 2 3 4 5 6 7 8</code></span></div>
+    <div class="board-step-label">{{ path.length ? 'Step ' + selectedStep + ' / ' + (path.length - 1) : 'Initial state' }}</div>
+    <div class="board-playback" aria-label="Solution playback controls">
+      <button type="button" (click)="firstStep()" [disabled]="!path.length || selectedStep === 0" aria-label="First step">|◀</button>
+      <button type="button" (click)="previousStep()" [disabled]="!path.length || selectedStep === 0" aria-label="Previous step">◀</button>
+      <button class="play-button" type="button" (click)="togglePlayback()" [disabled]="path.length < 2 || selectedStep === path.length - 1">{{ playing ? '❚❚ Pause' : '▶ Play' }}</button>
+      <button type="button" (click)="nextStep()" [disabled]="!path.length || selectedStep === path.length - 1" aria-label="Next step">▶</button>
+      <button type="button" (click)="lastStep()" [disabled]="!path.length || selectedStep === path.length - 1" aria-label="Last step">▶|</button>
+    </div>
+  </div>
+
+  <section class="solution-tree" aria-labelledby="tree-heading">
+    <div class="tree-heading">
+      <div>
+        <p class="eyebrow">Solution path tree</p>
+        <p class="tree-legend" id="tree-heading">Click a board on the path to jump to that step.</p>
+      </div>
+    </div>
+    @if (path.length) {
+      <div class="tree-trace">
+        @for (step of path; track track($index)) {
+          <div class="tree-column">
+            <span class="tree-edge">{{ $index === 0 ? 'start' : actionAt($index) }}</span>
+            <button type="button" class="trace-step" [class.active]="selectedStep === $index" [class.goal]="$last" (click)="selectStepFromTree($index)">
+              <span>Step {{ $index }}</span>
+              <div class="mini-board">@for (tile of step; track $index) { <i [class.empty]="tile === 0">{{ tile || '' }}</i> }</div>
+            </button>
+            @if (!$last) { <span class="tree-link"></span> }
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="tree-empty">The tree appears after solving.</p>
+    }
+  </section>
+</section>

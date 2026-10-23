@@ -1,3 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+:root { --bg: #fff8f3; --card: #fffdfb; --tx: #3e4050; --mu: #8d8997; --bd: #eadfe0; --ac: #8f9fe8; --acs: #e8edff; --tile: #f3eaf0; --ok: #8bc6a6; font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: var(--tx); background: var(--bg); }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input, select { font: inherit; color: var(--tx); }

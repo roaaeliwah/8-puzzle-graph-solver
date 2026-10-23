@@ -2,10 +2,7 @@ from core.node import Node
 from core.result import SearchResult
 
 def is_goal(state):
-    goal = (0, 1, 2, 3, 4, 5, 6, 7, 8)
-    if state == goal:
-        return True
-    return False
+    return state == (0, 1, 2, 3, 4, 5, 6, 7, 8)
 
 def get_successors(state):
     moves = (("Up", -1, 0), ("Down", 1, 0), ("Left", 0, -1), ("Right", 0, 1))

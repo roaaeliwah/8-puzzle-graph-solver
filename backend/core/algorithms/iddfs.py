@@ -30,11 +30,10 @@ def depth_limited_search(initial_state, limit):
         for action, state in get_successors(cur.state):
             new_depth = cur.depth + 1 
 
-            if new_depth > max_depth:
-                max_depth = new_depth
-            if state not in best_depth or new_depth < best_depth[state]:       
+            if state not in best_depth or new_depth < best_depth[state]:     
                 best_depth[state] = new_depth
                 stack.append(Node(state=state, parent=cur, depth=new_depth, g=cur.g+1, action=action))
+                max_depth = max(max_depth, new_depth)
     
     # goal not found in limit
     return None, nodes_expanded, max_depth

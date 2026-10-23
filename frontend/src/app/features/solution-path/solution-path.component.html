@@ -1,0 +1,29 @@
+<section class="panel path-panel" aria-labelledby="path-heading">
+  @if (loading) {
+    <p class="empty-state">Searching the state graph…</p>
+  } @else if (!result && !comparison) {
+    <p class="empty-state">Run a search to see the solver metrics.</p>
+  } @else if (result) {
+    <article class="output-card metrics-card">
+      <h3>Metrics</h3>
+      <div class="metrics-grid">
+        <span><b>Algorithm</b>{{ result.algorithm }}{{ result.heuristic ? ' · ' + result.heuristic : '' }}</span>
+        <span><b>Path cost</b>{{ result.cost }}</span>
+        <span><b>Nodes expanded</b>{{ result.nodes_expanded }}</span>
+        <span><b>Maximum depth</b>{{ result.max_depth }}</span>
+        <span><b>Running time</b>{{ result.running_time }} s</span>
+      </div>
+    </article>
+  }
+  @if (comparison) {
+    <article class="output-card comparison-card">
+      <h3>Heuristic comparison</h3>
+      <table><thead><tr><th>Heuristic</th><th>Path cost</th><th>Nodes expanded</th><th>Search depth</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>Manhattan</td><td>{{ comparison.manhattan.cost }}</td><td [class.best]="comparison.manhattan.nodes_expanded <= comparison.euclidean.nodes_expanded">{{ comparison.manhattan.nodes_expanded }}</td><td>{{ comparison.manhattan.max_depth }}</td><td>{{ comparison.manhattan.running_time }} s</td></tr>
+          <tr><td>Euclidean</td><td>{{ comparison.euclidean.cost }}</td><td [class.best]="comparison.euclidean.nodes_expanded <= comparison.manhattan.nodes_expanded">{{ comparison.euclidean.nodes_expanded }}</td><td>{{ comparison.euclidean.max_depth }}</td><td>{{ comparison.euclidean.running_time }} s</td></tr>
+        </tbody>
+      </table>
+    </article>
+  }
+</section>

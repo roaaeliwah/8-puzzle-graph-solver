@@ -40,12 +40,10 @@ def dfs_search(initial_state):
         nodes_expanded += 1
         
         for action, state in get_successors(cur.state):
-            new_depth = cur.depth + 1  
-            if new_depth > max_depth:
-                max_depth = new_depth
-            if state not in visited:       
+            if state not in visited:     
                 visited.add(state)
                 stack.append(Node(state=state, parent=cur, depth=cur.depth + 1, g=cur.g+1, action=action))
+                max_depth = max(max_depth, cur.depth+1)
 
     return SearchResult(
         solved=False,
