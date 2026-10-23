@@ -62,6 +62,9 @@ def a_star_search(initial_state, heuristic_func):
             if next_state not in best_g or new_g < best_g[next_state]:
                 best_g[next_state] = new_g
                 
+                if new_depth > max_depth:
+                    max_depth = new_depth
+                
                 next_node = Node(
                     state=next_state, 
                     parent=current_node, 
