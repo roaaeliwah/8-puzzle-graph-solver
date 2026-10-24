@@ -13,14 +13,15 @@ def a_star_search(initial_state, heuristic_func):
     start_time = time.time()
 
     if not is_solvable(initial_state):
-            return SearchResult(
-        solved=False,
-        path=None,
-        cost=0,
-        nodes_expanded=0,
-        max_depth=0,
-        running_time=time.time() - start_time
-    )
+        return SearchResult(
+            solved=False,
+            path=None,
+            actions=None,
+            cost=0,
+            nodes_expanded=0,
+            max_depth=0,
+            running_time=time.time() - start_time
+        )
     start_node = Node(state=initial_state, parent=None, depth=0, g=0, action=None)
     
     frontier = []

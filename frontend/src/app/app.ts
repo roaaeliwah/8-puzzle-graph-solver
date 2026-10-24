@@ -21,7 +21,7 @@ export class App {
   protected readonly currentStep = signal(0);
   protected readonly hasTree = computed(() => {
     const sol = this.solution();
-    return sol?.algorithm === 'bfs' && !!sol?.solved && !!sol?.path?.length && !!sol?.actions?.length;
+    return !!sol?.solved && !!sol?.path?.length;
   });
 
   constructor(private readonly puzzleApi: PuzzleApiService) {}

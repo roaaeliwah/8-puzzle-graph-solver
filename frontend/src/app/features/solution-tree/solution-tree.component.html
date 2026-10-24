@@ -4,13 +4,16 @@
       <p class="eyebrow" id="solution-tree-heading">Solution Path Visualization</p>
       @if (nodes.length) {
         <span class="step-badge">
-          Step {{ currentStep }} of {{ nodes[nodes.length - 1].index }}
+          Step {{ currentStep }} of {{ totalSolutionSteps }}
+          @if (truncatedSteps) {
+            (first {{ maxStepsToRender }} shown)
+          }
         </span>
       }
     </div>
     <p class="tree-legend">
       Each chunk displays 4 levels of candidate actions (depth {{ chunkDepth }}).
-      The highlighted solid path traces the actual BFS solution from initial state to goal.
+      The highlighted solid path traces the actual {{ algorithmLabel }} solution from initial state to goal.
     </p>
   </div>
 
@@ -180,6 +183,6 @@
       </svg>
     </div>
   } @else {
-    <p class="tree-empty">Solve the puzzle with BFS to see the path visualization.</p>
+    <p class="tree-empty">Solve the puzzle with any algorithm to see the path visualization.</p>
   }
 </section>

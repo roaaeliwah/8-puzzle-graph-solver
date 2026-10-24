@@ -1,7 +1,7 @@
 <main class="app-shell">
   <header class="app-header">
     <div>
-      <h1>8-Puzzle Search Solver</h1>
+      <h1>8-Puzzle Solver</h1>
       <p class="subtitle">BFS, DFS, Iterative DFS and A* (Manhattan / Euclidean)</p>
     </div>
   </header>
@@ -23,8 +23,9 @@
       (compare)="compare($event)"
     />
     <app-solution-tree
-      [path]="solution()?.algorithm === 'bfs' ? (solution()?.path ?? []) : []"
-      [actions]="solution()?.algorithm === 'bfs' ? (solution()?.actions ?? []) : []"
+      [path]="solution()?.path ?? []"
+      [actions]="solution()?.actions ?? []"
+      [algorithm]="solution()?.algorithm"
       [currentStep]="currentStep()"
       (stepSelect)="onStepSelect($event)"
     />

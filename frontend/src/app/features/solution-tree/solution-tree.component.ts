@@ -127,6 +127,22 @@ function statesEqual(a: PuzzleState, b: PuzzleState): boolean {
   return true;
 }
 
+function deriveActionsFromPath(path: PuzzleState[]): string[] {
+  if (!path || path.length < 2) return [];
+  const actions: string[] = [];
+  for (let i = 0; i < path.length - 1; i++) {
+    const fromIdx = path[i].indexOf(0);
+    const toIdx = path[i + 1].indexOf(0);
+    const delta = toIdx - fromIdx;
+    if (delta === -3) actions.push('Up');
+    else if (delta === 3) actions.push('Down');
+    else if (delta === -1) actions.push('Left');
+    else if (delta === 1) actions.push('Right');
+    else actions.push('Move');
+  }
+  return actions;
+}
+
 /** Creates a loosely-curved, wiggling dashed vertical continuation line between chunks. */
 function generateSquigglyPath(x1: number, y1: number, x2: number, y2: number): string {
   const dy = y2 - y1;
@@ -159,6 +175,7 @@ function generateSquigglyPath(x1: number, y1: number, x2: number, y2: number): s
 export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() path: PuzzleState[] = [];
   @Input() actions: string[] = [];
+  @Input() algorithm?: string;
   @Input() currentStep = 0;
   @Input() chunkDepth = 3;
   @Output() stepSelect = new EventEmitter<number>();
@@ -173,9 +190,25 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
   svgWidth = 0;
   svgHeight = 0;
 
+  /** Safeguard for deep search algorithms like DFS. */
+  readonly maxStepsToRender = 100;
+  truncatedSteps = false;
+  totalSolutionSteps = 0;
+
   /** Animation tracking: only the actively advancing step gets the transition. */
   animatingStep = -1;
   previousStep = 0;
+
+  get algorithmLabel(): string {
+    if (!this.algorithm) return 'optimal';
+    switch (this.algorithm.toLowerCase()) {
+      case 'bfs': return 'BFS';
+      case 'dfs': return 'DFS';
+      case 'iddfs': return 'Iterative DFS';
+      case 'astar': return 'A*';
+      default: return this.algorithm.toUpperCase();
+    }
+  }
 
   /** Visual and tree configuration constants. */
   readonly nodeRadius = 18;
@@ -206,7 +239,7 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['path'] || changes['actions'] || changes['chunkDepth']) {
+    if (changes['path'] || changes['actions'] || changes['chunkDepth'] || changes['algorithm']) {
       this.recompute();
       this.previousStep = 0;
       this.animatingStep = -1;
@@ -242,7 +275,7 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
   }
 
   private recompute(): void {
-    if (!this.path?.length || this.path.length < 2 || !this.actions?.length) {
+    if (!this.path?.length) {
       this.nodes = [];
       this.edges = [];
       this.branches = [];
@@ -252,13 +285,31 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
       return;
     }
 
-    const totalSteps = this.actions.length;
+    const effectiveActions = (this.actions && this.actions.length === this.path.length - 1)
+      ? this.actions
+      : deriveActionsFromPath(this.path);
+
+    if (this.path.length > 1 && !effectiveActions.length) {
+      this.nodes = [];
+      this.edges = [];
+      this.branches = [];
+      this.chunkConnectors = [];
+      this.svgWidth = 0;
+      this.svgHeight = 0;
+      return;
+    }
+
+    const totalSteps = effectiveActions.length;
+    this.totalSolutionSteps = totalSteps;
+    const cappedSteps = Math.min(totalSteps, this.maxStepsToRender);
+    this.truncatedSteps = totalSteps > this.maxStepsToRender;
+
     const chunks: { chunkIndex: number; startIdx: number; endIdx: number }[] = [];
     let curr = 0;
     let cIdx = 0;
 
-    while (curr < totalSteps) {
-      const next = Math.min(curr + this.chunkDepth, totalSteps);
+    while (curr < cappedSteps) {
+      const next = Math.min(curr + this.chunkDepth, cappedSteps);
       chunks.push({ chunkIndex: cIdx++, startIdx: curr, endIdx: next });
       curr = next;
     }
@@ -284,8 +335,8 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
         chunkIndex,
         depth: 0,
         state: this.path[startIdx],
-        action: startIdx === 0 ? null : this.actions[startIdx - 1],
-        incomingAction: startIdx === 0 ? null : this.actions[startIdx - 1],
+        action: startIdx === 0 ? null : effectiveActions[startIdx - 1],
+        incomingAction: startIdx === 0 ? null : effectiveActions[startIdx - 1],
         isRealPath: true,
         stepIndex: startIdx,
         revealStep: startIdx,
@@ -311,7 +362,7 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
 
         const canProduceRealPathChild =
           parent.isRealPath && parent.stepIndex >= startIdx && parent.stepIndex < endIdx;
-        const nextRealAction = canProduceRealPathChild ? this.actions[parent.stepIndex] : null;
+        const nextRealAction = canProduceRealPathChild ? effectiveActions[parent.stepIndex] : null;
         const nextRealState = canProduceRealPathChild ? this.path[parent.stepIndex + 1] : null;
 
         for (let i = 0; i < validMoves.length; i++) {
@@ -328,7 +379,7 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
             isThisChildRealPath && childStepIndex === endIdx && endIdx < totalSteps;
 
           const childNode: LayoutNode = {
-            id: `c${chunkIndex}_d${parent.depth + 1}_${i}_${action}_${isThisChildRealPath ? childStepIndex : 'alt'}`,
+            id: `${parent.id}_d${parent.depth + 1}_${i}_${action}_${isThisChildRealPath ? childStepIndex : 'alt'}`,
             chunkIndex,
             depth: parent.depth + 1,
             state: nextState,
