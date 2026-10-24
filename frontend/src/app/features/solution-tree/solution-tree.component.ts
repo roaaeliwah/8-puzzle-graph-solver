@@ -191,13 +191,16 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
   // ───────────────────────── lifecycle ──────────────────────────
 
   ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
     this.measureContainer();
-    this.resizeObserver = new ResizeObserver(() => {
-      this.measureContainer();
-      this.recompute();
-    });
-    if (this.containerRef?.nativeElement) {
-      this.resizeObserver.observe(this.containerRef.nativeElement);
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.measureContainer();
+        this.recompute();
+      });
+      if (this.containerRef?.nativeElement) {
+        this.resizeObserver.observe(this.containerRef.nativeElement);
+      }
     }
     this.recompute();
   }
@@ -494,7 +497,9 @@ export class SolutionTreeComponent implements OnChanges, AfterViewInit, OnDestro
     this.svgHeight = currentY + 20;
 
     // Measure exact edge lengths on next animation frame
-    requestAnimationFrame(() => this.measureEdgeLengths());
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(() => this.measureEdgeLengths());
+    }
   }
 
   /** Measure the exact path length of each edge SVG path element. */

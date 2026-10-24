@@ -1,6 +1,6 @@
 :host { display: block; min-height: 100vh; }
-.app-shell { max-width: 1500px; margin: 0 auto; padding: 1.25rem 1.5rem 2rem; }
-.app-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+.app-shell { max-width: 1560px; margin: 0 auto; padding: 1.25rem 1.5rem 2rem; }
+.app-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.2rem; }
 h1, h2, p { margin: 0; }
 h1 { color: var(--tx); font-size: 1.25rem; }
 h2 { color: var(--mu); font-size: .8rem; }
@@ -9,11 +9,46 @@ h2 { color: var(--mu); font-size: .8rem; }
 .status-badge { padding: .45rem .7rem; border: 1px solid #e6dced; border-radius: 99px; background: #f8f0fb; color: #77718d; font-size: .75rem; font-weight: 700; }
 .status-badge.is-solving { color: #b28a58; background: #fff5df; }.status-badge.is-solved { color: #579777; background: #edf9f1; }.status-badge.is-unsolved { color: #c27d84; background: #fff0f1; }
 .error-message { margin-bottom: 1rem; padding: .8rem 1rem; border: 1px solid #f0cfd2; border-radius: .55rem; background: #fff1f2; color: #b96870; }
-.workspace { display: grid; grid-template-columns: 250px minmax(280px, 1fr); gap: .8rem; align-items: stretch; padding: .8rem 0; }
-.workspace app-puzzle-board { display: contents; }
-.app-shell > app-solution-path { display: block; min-width: 0; margin: 0; }
-.app-shell > app-solution-tree { display: block; min-width: 0; margin-top: 1rem; }
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(360px, 460px) minmax(400px, 1fr);
+  gap: .8rem;
+  align-items: stretch;
+  padding: .5rem 0;
+}
+
+.workspace app-puzzle-board {
+  display: contents;
+}
+
+.workspace app-solution-tree {
+  grid-column: 2;
+  grid-row: 2;
+  display: block;
+  min-width: 0;
+}
+
+.app-shell > app-solution-path {
+  display: block;
+  min-width: 0;
+  margin-top: .8rem;
+}
+
 .panel { padding: 1.15rem; border: 1px solid var(--bd); border-radius: .75rem; background: var(--card); box-shadow: 0 .7rem 2rem rgba(170, 145, 160, .08); }
 .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-@media (max-width: 980px) { .workspace { grid-template-columns: 1fr; } .workspace app-puzzle-board, .workspace app-solution-path { grid-column: 1; } }
-@media (max-width: 600px) { .app-shell { padding: 1rem .9rem 1.5rem; } .app-header { flex-direction: column; } }
+
+@media (max-width: 980px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .workspace app-solution-tree {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-shell { padding: 1rem .9rem 1.5rem; }
+  .app-header { flex-direction: column; }
+}

@@ -4,6 +4,11 @@
   border-radius: .75rem;
   background: #fffaf8;
   box-shadow: 0 .5rem 1.5rem rgba(184, 155, 175, .08);
+  min-height: 420px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 .tree-header {
@@ -36,11 +41,15 @@
 
 .tree-empty {
   display: grid;
-  min-height: 10rem;
+  flex: 1;
+  min-height: 14rem;
   place-items: center;
-  padding: 1rem;
+  padding: 1.5rem;
   color: var(--mu);
   text-align: center;
+  border: 1px dashed #ebdce5;
+  border-radius: .5rem;
+  background: #fdfbfa;
 }
 
 /* ── SVG container ── */
@@ -49,6 +58,7 @@
   overflow-x: auto;
   overflow-y: auto;
   max-height: 640px;
+  flex: 1;
   border: 1px solid #f0e8ee;
   border-radius: .5rem;
   background: #fefcfa;

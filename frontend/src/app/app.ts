@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { PuzzleBoardComponent } from './features/puzzle-board/puzzle-board.component';
 import { SolutionPathComponent } from './features/solution-path/solution-path.component';
 import { SolutionTreeComponent } from './features/solution-tree/solution-tree.component';
@@ -19,6 +19,10 @@ export class App {
   protected readonly status = signal<'ready' | 'searching' | 'solved' | 'unsolved'>('ready');
   protected readonly comparison = signal<HeuristicComparison | null>(null);
   protected readonly currentStep = signal(0);
+  protected readonly hasTree = computed(() => {
+    const sol = this.solution();
+    return sol?.algorithm === 'bfs' && !!sol?.solved && !!sol?.path?.length && !!sol?.actions?.length;
+  });
 
   constructor(private readonly puzzleApi: PuzzleApiService) {}
 

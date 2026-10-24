@@ -22,19 +22,18 @@
       (solve)="solve($event)"
       (compare)="compare($event)"
     />
+    <app-solution-tree
+      [path]="solution()?.algorithm === 'bfs' ? (solution()?.path ?? []) : []"
+      [actions]="solution()?.algorithm === 'bfs' ? (solution()?.actions ?? []) : []"
+      [currentStep]="currentStep()"
+      (stepSelect)="onStepSelect($event)"
+    />
   </section>
+
   <app-solution-path
     [path]="solution()?.path ?? []"
     [result]="solution()"
     [comparison]="comparison()"
     [loading]="isSolving()"
   />
-  @if (solution()?.algorithm === 'bfs' && solution()?.solved && solution()?.path && solution()?.actions) {
-    <app-solution-tree
-      [path]="solution()!.path!"
-      [actions]="solution()!.actions!"
-      [currentStep]="currentStep()"
-      (stepSelect)="onStepSelect($event)"
-    />
-  }
 </main>

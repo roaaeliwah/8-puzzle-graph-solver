@@ -1,33 +1,42 @@
 <section class="panel board-panel" aria-label="Interactive board">
   <aside class="setup-pane">
-    <div class="panel-heading">
-      <div><p class="eyebrow">Setup</p></div>
+    <div class="setup-header">
+      <p class="eyebrow">Setup</p>
+      <small id="initial-state-help">9 numbers, 0 = blank (spaces or commas)</small>
     </div>
-    <label for="initial-state">Initial state (9 numbers, 0 = blank)</label>
-    <div class="input-row">
-      <input id="initial-state" type="text" [(ngModel)]="initialStateInput" [disabled]="disabled" placeholder="1,2,5,3,4,0,6,7,8" aria-describedby="initial-state-help initial-state-error" />
-      <button class="secondary-button" type="button" (click)="loadInitialState()" [disabled]="disabled">Load</button>
+    <div class="setup-body">
+      <div class="setup-field state-field">
+        <div class="input-row">
+          <input id="initial-state" type="text" [(ngModel)]="initialStateInput" [disabled]="disabled" placeholder="1,2,5,3,4,0,6,7,8" aria-describedby="initial-state-help initial-state-error" />
+          <button class="secondary-button" type="button" (click)="loadInitialState()" [disabled]="disabled">Load</button>
+          <button class="secondary-button" type="button" (click)="shuffle()" [disabled]="disabled">Shuffle</button>
+          <button class="secondary-button" type="button" (click)="reset()" [disabled]="disabled">Reset</button>
+        </div>
+        @if (inputError) { <small id="initial-state-error" class="input-error" role="alert">{{ inputError }}</small> }
+      </div>
+
+      <div class="setup-field algo-field">
+        <label>Algorithm
+          <select [(ngModel)]="algorithm" [disabled]="disabled">
+            <option value="bfs">BFS</option><option value="dfs">DFS</option><option value="iddfs">Iterative DFS</option><option value="astar">A*</option>
+          </select>
+        </label>
+        @if (algorithm === 'astar') {
+          <label>Heuristic (A*)
+            <select [(ngModel)]="heuristic" [disabled]="disabled">
+              <option value="manhattan">Manhattan</option><option value="euclidean">Euclidean</option>
+            </select>
+          </label>
+        }
+      </div>
+
+      <div class="setup-field actions-field">
+        <div class="solve-actions">
+          <button class="primary-button solve-btn" type="button" (click)="submit()" [disabled]="disabled">Solve</button>
+          <button class="secondary-button run-all-btn" type="button" (click)="compareHeuristics()" [disabled]="disabled">Run all</button>
+        </div>
+      </div>
     </div>
-    <small id="initial-state-help">Use spaces or commas.</small>
-    @if (inputError) { <small id="initial-state-error" class="input-error" role="alert">{{ inputError }}</small> }
-    <div class="header-actions">
-      <button class="secondary-button" type="button" (click)="shuffle()" [disabled]="disabled">Shuffle</button>
-      <button class="secondary-button" type="button" (click)="reset()" [disabled]="disabled">Reset</button>
-    </div>
-    <label>Algorithm
-      <select [(ngModel)]="algorithm" [disabled]="disabled">
-        <option value="bfs">BFS</option><option value="dfs">DFS</option><option value="iddfs">Iterative DFS</option><option value="astar">A*</option>
-      </select>
-    </label>
-    @if (algorithm === 'astar') {
-      <label>Heuristic (A*)
-        <select [(ngModel)]="heuristic" [disabled]="disabled">
-          <option value="manhattan">Manhattan</option><option value="euclidean">Euclidean</option>
-        </select>
-      </label>
-    }
-    <button class="primary-button full-width" type="button" (click)="submit()" [disabled]="disabled">Solve</button>
-    <button class="secondary-button full-width" type="button" (click)="compareHeuristics()" [disabled]="disabled">Run all</button>
   </aside>
 
   <div class="board-pane">
