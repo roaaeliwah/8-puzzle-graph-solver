@@ -45,6 +45,7 @@ def iddfs_search(initial_state):
         return SearchResult(
             solved=False,
             path=None,
+            actions=None,
             cost=0,
             nodes_expanded=0,
             max_depth=0,
@@ -65,6 +66,7 @@ def iddfs_search(initial_state):
             return SearchResult(
                 solved=True,
                 path=goal.get_path(),
+                actions=goal.get_actions(),
                 cost=goal.depth,
                 nodes_expanded=total_nodes_expanded,
                 max_depth=overall_max_depth,
@@ -74,6 +76,7 @@ def iddfs_search(initial_state):
     return SearchResult(
         solved=False,
         path=None,
+        actions=None,
         cost=0,
         nodes_expanded=total_nodes_expanded,
         max_depth=overall_max_depth,

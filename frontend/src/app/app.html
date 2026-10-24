@@ -14,9 +14,11 @@
     <app-puzzle-board
       [state]="puzzleState()"
       [path]="solution()?.path ?? []"
+      [selectedStep]="currentStep()"
       [disabled]="isSolving()"
       (stateChange)="onStateChange($event)"
       (pathStateChange)="onPathStateChange($event)"
+      (stepChange)="onStepChange($event)"
       (solve)="solve($event)"
       (compare)="compare($event)"
     />
@@ -27,4 +29,12 @@
     [comparison]="comparison()"
     [loading]="isSolving()"
   />
+  @if (solution()?.algorithm === 'bfs' && solution()?.solved && solution()?.path && solution()?.actions) {
+    <app-solution-tree
+      [path]="solution()!.path!"
+      [actions]="solution()!.actions!"
+      [currentStep]="currentStep()"
+      (stepSelect)="onStepSelect($event)"
+    />
+  }
 </main>

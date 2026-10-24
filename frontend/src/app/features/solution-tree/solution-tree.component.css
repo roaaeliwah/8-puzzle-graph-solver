@@ -1,0 +1,255 @@
+.tree-panel {
+  padding: 1rem;
+  border: 1px solid #eadfe8;
+  border-radius: .75rem;
+  background: #fffaf8;
+  box-shadow: 0 .5rem 1.5rem rgba(184, 155, 175, .08);
+}
+
+.tree-header {
+  margin-bottom: .8rem;
+}
+
+.tree-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.step-badge {
+  padding: .25rem .65rem;
+  border: 1px solid #d5dcf7;
+  border-radius: 99px;
+  background: #f0f4ff;
+  color: #5269b8;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.tree-legend {
+  margin-top: .3rem;
+  color: var(--mu);
+  font-size: .75rem;
+  line-height: 1.5;
+}
+
+.tree-empty {
+  display: grid;
+  min-height: 10rem;
+  place-items: center;
+  padding: 1rem;
+  color: var(--mu);
+  text-align: center;
+}
+
+/* ── SVG container ── */
+
+.tree-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 640px;
+  border: 1px solid #f0e8ee;
+  border-radius: .5rem;
+  background: #fefcfa;
+  scroll-behavior: smooth;
+}
+
+.tree-svg {
+  display: block;
+  min-width: 100%;
+}
+
+/* ── Edges ── */
+
+.edge-path {
+  fill: none;
+  stroke: #9ba9ec;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+/* Single-step forward animation: line draws itself in over 380ms */
+.edge-path.animating {
+  transition: stroke-dashoffset 380ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Stub branches ── */
+
+.stub-line {
+  stroke: #d8cfe0;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 4 3;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stub-line.revealed {
+  opacity: 0.45;
+}
+
+/* Stubs appear alongside the node reveal at 380ms */
+.stub-line.revealed.animating {
+  animation: stub-fade-in 220ms ease 380ms backwards;
+}
+
+@keyframes stub-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+
+/* ── Nodes ── */
+
+.node-group {
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.node-group.revealed {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.node-content {
+  transform-origin: 0 0;
+}
+
+/* Sequenced appearance: node scales in at 360ms right as incoming edge finishes drawing */
+.node-content.animating {
+  animation: node-pop 240ms cubic-bezier(0.34, 1.56, 0.64, 1) 360ms backwards;
+}
+
+@keyframes node-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.25);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Ping pulse effect (brief pulse when incoming edge arrives) ── */
+
+.node-ping {
+  fill: none;
+  stroke: #5269b8;
+  transform-origin: 0 0;
+  animation: ping-pulse 420ms ease-out 380ms forwards;
+}
+
+@keyframes ping-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+    stroke-width: 3.5px;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+    stroke-width: 0.5px;
+  }
+}
+
+/* ── Active glow ring (subtle breathing indicator for current step) ── */
+
+.node-glow-ring {
+  fill: none;
+  stroke: #788bd7;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  transform-origin: 0 0;
+  animation: subtle-pulse 1.8s ease-in-out infinite 380ms;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    transform: scale(1.05);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 0.85;
+  }
+}
+
+/* ── Node circles ── */
+
+.node-circle {
+  fill: #e8edff;
+  stroke: #9ba9ec;
+  stroke-width: 2;
+  transition: fill .15s, stroke .15s, transform .15s;
+}
+
+.node-circle.node-active {
+  stroke: #5269b8;
+  stroke-width: 2.8;
+  fill: #e2e8ff;
+}
+
+.node-circle.node-start {
+  fill: #dce5ff;
+  stroke: #5269b8;
+  stroke-width: 2.5;
+}
+
+.node-circle.node-start.node-active {
+  stroke-width: 3.2;
+}
+
+.node-circle.node-goal {
+  fill: #edf9f1;
+  stroke: #7dc4a0;
+  stroke-width: 2.5;
+}
+
+.node-circle.node-goal.node-active {
+  stroke: #579777;
+  stroke-width: 3.2;
+}
+
+.node-group.revealed:hover .node-circle {
+  fill: #dce5ff;
+  stroke: #5269b8;
+}
+
+/* ── Text labels ── */
+
+.node-label {
+  fill: #4a5080;
+  font-size: .72rem;
+  font-weight: 700;
+  pointer-events: none;
+  user-select: none;
+}
+
+.action-label {
+  fill: #8d8997;
+  font-size: .58rem;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 600px) {
+  .tree-container {
+    max-height: 480px;
+  }
+}

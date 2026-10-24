@@ -1,0 +1,115 @@
+<section class="tree-panel" aria-labelledby="solution-tree-heading">
+  <div class="tree-header">
+    <div class="tree-header-row">
+      <p class="eyebrow" id="solution-tree-heading">Solution Path Visualization</p>
+      @if (nodes.length) {
+        <span class="step-badge">
+          Step {{ currentStep }} of {{ nodes.length - 1 }}
+        </span>
+      }
+    </div>
+    <p class="tree-legend">
+      The curved path traces the actual moves from initial state to goal.
+      Click any revealed step to jump the board to that state.
+    </p>
+  </div>
+
+  @if (nodes.length) {
+    <div class="tree-container" #treeContainer>
+      <svg
+        [attr.width]="svgWidth"
+        [attr.height]="svgHeight"
+        [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight"
+        class="tree-svg"
+      >
+        <!-- Dummy stub branches (behind edges and nodes) -->
+        <g class="stubs-layer">
+          @for (stub of stubs; track $index) {
+            <line
+              [attr.x1]="stub.x1"
+              [attr.y1]="stub.y1"
+              [attr.x2]="stub.x2"
+              [attr.y2]="stub.y2"
+              class="stub-line"
+              [class.revealed]="stub.nodeIndex <= currentStep"
+              [class.animating]="animatingStep === stub.nodeIndex"
+            />
+          }
+        </g>
+
+        <!-- Edges (per-segment bezier curves) -->
+        <g class="edges-layer">
+          @for (edge of edges; track edge.index) {
+            <path
+              [attr.d]="edge.d"
+              [attr.data-edge-index]="edge.index"
+              class="edge-path"
+              [class.revealed]="edge.index <= currentStep"
+              [class.animating]="animatingStep === edge.index"
+              [style.strokeDasharray]="edge.length"
+              [style.strokeDashoffset]="edge.index <= currentStep ? 0 : edge.length"
+            />
+          }
+        </g>
+
+        <!-- Nodes -->
+        <g class="nodes-layer">
+          @for (node of nodes; track node.index) {
+            <g
+              class="node-group"
+              [class.revealed]="node.index <= currentStep"
+              [class.is-current]="node.index === currentStep"
+              [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+              (click)="onNodeClick(node.index)"
+            >
+              <g class="node-content" [class.animating]="animatingStep === node.index">
+                <!-- Ping pulse circle (fires on step arrival) -->
+                @if (animatingStep === node.index && node.index > 0) {
+                  <circle
+                    [attr.r]="nodeRadius"
+                    class="node-ping"
+                  />
+                }
+
+                <!-- Subtle breathing glow ring for active current node -->
+                @if (node.index === currentStep) {
+                  <circle
+                    [attr.r]="nodeRadius + 4"
+                    class="node-glow-ring"
+                  />
+                }
+
+                <!-- Main node circle -->
+                <circle
+                  [attr.r]="nodeRadius"
+                  [class.node-start]="node.index === 0"
+                  [class.node-goal]="node.index === nodes.length - 1"
+                  [class.node-active]="node.index === currentStep"
+                  class="node-circle"
+                />
+
+                <!-- Step number -->
+                <text class="node-label" text-anchor="middle" dominant-baseline="central">
+                  {{ node.index }}
+                </text>
+
+                <!-- Action label (above node for non-root) -->
+                @if (node.action) {
+                  <text
+                    class="action-label"
+                    text-anchor="middle"
+                    [attr.y]="-(nodeRadius + 6)"
+                  >
+                    {{ node.action }}
+                  </text>
+                }
+              </g>
+            </g>
+          }
+        </g>
+      </svg>
+    </div>
+  } @else {
+    <p class="tree-empty">Solve the puzzle with BFS to see the path visualization.</p>
+  }
+</section>

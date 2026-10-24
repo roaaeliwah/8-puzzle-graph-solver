@@ -12,6 +12,7 @@ h2 { color: var(--mu); font-size: .8rem; }
 .workspace { display: grid; grid-template-columns: 250px minmax(280px, 1fr); gap: .8rem; align-items: stretch; padding: .8rem 0; }
 .workspace app-puzzle-board { display: contents; }
 .app-shell > app-solution-path { display: block; min-width: 0; margin: 0; }
+.app-shell > app-solution-tree { display: block; min-width: 0; margin-top: 1rem; }
 .panel { padding: 1.15rem; border: 1px solid var(--bd); border-radius: .75rem; background: var(--card); box-shadow: 0 .7rem 2rem rgba(170, 145, 160, .08); }
 .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
 @media (max-width: 980px) { .workspace { grid-template-columns: 1fr; } .workspace app-puzzle-board, .workspace app-solution-path { grid-column: 1; } }

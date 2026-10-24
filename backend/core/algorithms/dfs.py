@@ -8,6 +8,7 @@ def dfs_search(initial_state):
         return SearchResult(
             solved=False,
             path=None,
+            actions=None,
             cost=0,
             nodes_expanded=0,
             max_depth=0,
@@ -31,6 +32,7 @@ def dfs_search(initial_state):
             return SearchResult(
                 solved=True,
                 path=cur.get_path(),
+                actions=cur.get_actions(),
                 cost=cur.depth,
                 nodes_expanded=nodes_expanded,
                 max_depth=max_depth,
@@ -48,6 +50,7 @@ def dfs_search(initial_state):
     return SearchResult(
         solved=False,
         path=None,
+        actions=None,
         cost=0,
         nodes_expanded=nodes_expanded,
         max_depth=max_depth,

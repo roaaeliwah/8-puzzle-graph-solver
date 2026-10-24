@@ -18,6 +18,7 @@ export interface SolveResponse {
   heuristic: Heuristic | null;
   solved: boolean;
   path: PuzzleState[] | null;
+  actions: string[] | null;
   cost: number;
   nodes_expanded: number;
   max_depth: number;

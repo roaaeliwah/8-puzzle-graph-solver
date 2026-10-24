@@ -1,12 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { PuzzleBoardComponent } from './features/puzzle-board/puzzle-board.component';
 import { SolutionPathComponent } from './features/solution-path/solution-path.component';
+import { SolutionTreeComponent } from './features/solution-tree/solution-tree.component';
 import { Algorithm, GOAL_STATE, HeuristicComparison, PuzzleState, SolveRequest, SolveResponse } from './core/models/puzzle.models';
 import { PuzzleApiService } from './core/services/puzzle-api.service';
 
 @Component({
   selector: 'app-root',
-  imports: [PuzzleBoardComponent, SolutionPathComponent],
+  imports: [PuzzleBoardComponent, SolutionPathComponent, SolutionTreeComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -17,6 +18,7 @@ export class App {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly status = signal<'ready' | 'searching' | 'solved' | 'unsolved'>('ready');
   protected readonly comparison = signal<HeuristicComparison | null>(null);
+  protected readonly currentStep = signal(0);
 
   constructor(private readonly puzzleApi: PuzzleApiService) {}
 
@@ -25,10 +27,22 @@ export class App {
     this.solution.set(null);
     this.comparison.set(null);
     this.status.set('ready');
+    this.currentStep.set(0);
   }
 
   protected onPathStateChange(state: PuzzleState): void {
     this.puzzleState.set(state);
+  }
+
+  protected onStepChange(step: number): void {
+    this.currentStep.set(step);
+  }
+
+  protected onStepSelect(step: number): void {
+    this.currentStep.set(step);
+    if (this.solution()?.path?.[step]) {
+      this.puzzleState.set(this.solution()!.path![step]);
+    }
   }
 
   protected solve(request: SolveRequest): void {
@@ -36,9 +50,11 @@ export class App {
     this.status.set('searching');
     this.solution.set(null);
     this.errorMessage.set(null);
+    this.currentStep.set(0);
     this.puzzleApi.solve(request).subscribe({
       next: (response) => {
         this.solution.set(response);
+        this.currentStep.set(0);
         this.isSolving.set(false);
         this.status.set(response.solved ? 'solved' : 'unsolved');
       },

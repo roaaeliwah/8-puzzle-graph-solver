@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class SearchResult:
     solved: bool
     path: list[tuple[int, ...]] | None
+    actions: list[str] | None
     cost: int
     nodes_expanded: int
     max_depth: int

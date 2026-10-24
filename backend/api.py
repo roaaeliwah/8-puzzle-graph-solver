@@ -79,6 +79,7 @@ def solve(request:SolveRequest):
         "heuristic": request.heuristic if request.algorithm == Algorithm.astar else None,
         "solved": result.solved,
         "path": result.path,
+        "actions": result.actions,
         "cost": result.cost,
         "nodes_expanded": result.nodes_expanded,
         "max_depth": result.max_depth,

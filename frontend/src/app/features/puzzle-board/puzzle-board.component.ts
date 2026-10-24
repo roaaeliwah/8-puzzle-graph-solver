@@ -12,8 +12,10 @@ export class PuzzleBoardComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) state!: PuzzleState;
   @Input() path: PuzzleState[] = [];
   @Input() disabled = false;
+  @Input() selectedStep = 0;
   @Output() stateChange = new EventEmitter<PuzzleState>();
   @Output() pathStateChange = new EventEmitter<PuzzleState>();
+  @Output() stepChange = new EventEmitter<number>();
   @Output() solve = new EventEmitter<SolveRequest>();
   @Output() compare = new EventEmitter<SolveRequest>();
 
@@ -22,7 +24,6 @@ export class PuzzleBoardComponent implements OnChanges, OnDestroy {
   protected initialStateInput = SAMPLE_STATE.join(' ');
   protected inputError: string | null = null;
   protected moveCount = 0;
-  protected selectedStep = 0;
   protected playing = false;
   private playbackTimer: ReturnType<typeof setInterval> | null = null;
   protected readonly goalState = GOAL_STATE;
@@ -30,7 +31,13 @@ export class PuzzleBoardComponent implements OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['path']) {
       this.selectedStep = 0;
+      this.stepChange.emit(0);
       this.stopPlayback();
+    } else if (changes['selectedStep'] && !changes['selectedStep'].firstChange) {
+      const step = changes['selectedStep'].currentValue;
+      if (this.path.length && this.path[step]) {
+        this.pathStateChange.emit(this.path[step]);
+      }
     }
   }
 
@@ -51,6 +58,9 @@ export class PuzzleBoardComponent implements OnChanges, OnDestroy {
   }
 
   protected reset(): void {
+    this.stopPlayback();
+    this.selectedStep = 0;
+    this.stepChange.emit(0);
     this.stateChange.emit([...this.goalState]);
     this.initialStateInput = SAMPLE_STATE.join(' ');
     this.inputError = null;
@@ -58,6 +68,9 @@ export class PuzzleBoardComponent implements OnChanges, OnDestroy {
   }
 
   protected shuffle(): void {
+    this.stopPlayback();
+    this.selectedStep = 0;
+    this.stepChange.emit(0);
     let shuffled = [...this.goalState] as PuzzleState;
     let blank = 0;
     for (let step = 0; step < 30; step++) {
@@ -171,10 +184,13 @@ export class PuzzleBoardComponent implements OnChanges, OnDestroy {
     }, 700);
   }
 
-  private selectStep(index: number): void {
+  private selectStep(index: number, emitStep = true): void {
     if (!this.path.length) return;
     this.selectedStep = index;
     this.pathStateChange.emit(this.path[index]);
+    if (emitStep) {
+      this.stepChange.emit(index);
+    }
   }
 
   private stopPlayback(): void {
