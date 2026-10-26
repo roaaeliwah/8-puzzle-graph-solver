@@ -28,17 +28,73 @@ export class PuzzleBoardComponent implements OnChanges, OnDestroy {
   private playbackTimer: ReturnType<typeof setInterval> | null = null;
   protected readonly goalState = GOAL_STATE;
 
+  protected precomputedActions: string[] = [];
+  readonly windowThreshold = 40;
+  readonly windowRadius = 15;
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['path']) {
       this.selectedStep = 0;
       this.stepChange.emit(0);
       this.stopPlayback();
+      this.precomputeActions();
     } else if (changes['selectedStep'] && !changes['selectedStep'].firstChange) {
       const step = changes['selectedStep'].currentValue;
       if (this.path.length && this.path[step]) {
         this.pathStateChange.emit(this.path[step]);
       }
     }
+  }
+
+  private precomputeActions(): void {
+    this.precomputedActions = [];
+    if (!this.path || this.path.length < 2) return;
+    for (let i = 1; i < this.path.length; i++) {
+      const prevBlank = this.path[i - 1].indexOf(0);
+      const currBlank = this.path[i].indexOf(0);
+      const delta = currBlank - prevBlank;
+      this.precomputedActions.push(
+        delta === -3 ? 'Up' : delta === 3 ? 'Down' : delta === -1 ? 'Left' : 'Right'
+      );
+    }
+  }
+
+  get isWindowed(): boolean {
+    return this.path.length > this.windowThreshold;
+  }
+
+  get windowStart(): number {
+    if (!this.isWindowed) return 0;
+    const start = Math.max(0, this.selectedStep - this.windowRadius);
+    const end = Math.min(this.path.length - 1, this.selectedStep + this.windowRadius);
+    if (end === this.path.length - 1) {
+      return Math.max(0, this.path.length - 1 - this.windowRadius * 2);
+    }
+    return start;
+  }
+
+  get windowEnd(): number {
+    if (!this.isWindowed) return Math.max(0, this.path.length - 1);
+    const start = Math.max(0, this.selectedStep - this.windowRadius);
+    if (start === 0) {
+      return Math.min(this.path.length - 1, this.windowRadius * 2);
+    }
+    return Math.min(this.path.length - 1, this.selectedStep + this.windowRadius);
+  }
+
+  get visibleSteps(): { index: number; state: PuzzleState; action: string }[] {
+    if (!this.path.length) return [];
+    const start = this.windowStart;
+    const end = this.windowEnd;
+    const steps: { index: number; state: PuzzleState; action: string }[] = [];
+    for (let i = start; i <= end; i++) {
+      steps.push({
+        index: i,
+        state: this.path[i],
+        action: i === 0 ? 'start' : (this.precomputedActions[i - 1] ?? ''),
+      });
+    }
+    return steps;
   }
 
   protected submit(): void {
@@ -156,14 +212,12 @@ export class PuzzleBoardComponent implements OnChanges, OnDestroy {
 
   protected get currentMove(): string {
     if (this.selectedStep === 0 || !this.path[this.selectedStep]) return 'Initial state';
-    const previous = this.path[this.selectedStep - 1];
-    const delta = this.path[this.selectedStep].indexOf(0) - previous.indexOf(0);
-    return delta === -3 ? 'Up' : delta === 3 ? 'Down' : delta === -1 ? 'Left' : 'Right';
+    return this.precomputedActions[this.selectedStep - 1] ?? 'Move';
   }
 
   protected actionAt(index: number): string {
-    const delta = this.path[index].indexOf(0) - this.path[index - 1].indexOf(0);
-    return delta === -3 ? 'Up' : delta === 3 ? 'Down' : delta === -1 ? 'Left' : 'Right';
+    if (index === 0) return 'start';
+    return this.precomputedActions[index - 1] ?? '';
   }
 
   protected track(index: number): number {

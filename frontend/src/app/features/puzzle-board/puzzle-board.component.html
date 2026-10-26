@@ -60,21 +60,77 @@
 
   <section class="solution-tree" aria-labelledby="tree-heading">
     <div class="tree-heading">
-      <div>
-        <p class="eyebrow">Solution path tree</p>
-        <p class="tree-legend" id="tree-heading">Click a board on the path to jump to that step.</p>
+      <div class="tree-heading-row">
+        <div>
+          <p class="eyebrow">Solution path tree</p>
+          <p class="tree-legend" id="tree-heading">
+            Click a board on the path to jump to that step.
+            @if (isWindowed) {
+              <span class="window-badge">Showing steps {{ windowStart }} – {{ windowEnd }} of {{ path.length - 1 }}</span>
+            }
+          </p>
+        </div>
       </div>
     </div>
     @if (path.length) {
       <div class="tree-trace">
-        @for (step of path; track track($index)) {
-          <div class="tree-column">
-            <span class="tree-edge">{{ $index === 0 ? 'start' : actionAt($index) }}</span>
-            <button type="button" class="trace-step" [class.active]="selectedStep === $index" [class.goal]="$last" (click)="selectStepFromTree($index)">
-              <span>Step {{ $index }}</span>
-              <div class="mini-board">@for (tile of step; track $index) { <i [class.empty]="tile === 0">{{ tile || '' }}</i> }</div>
+        @if (isWindowed && windowStart > 0) {
+          <div class="tree-column window-edge-column">
+            <span class="tree-edge">start</span>
+            <button type="button" class="trace-step window-jump-step" (click)="firstStep()" title="Jump to Step 0">
+              <span>Step 0</span>
+              <div class="mini-board">
+                @for (tile of path[0]; track $index) {
+                  <i [class.empty]="tile === 0">{{ tile || '' }}</i>
+                }
+              </div>
             </button>
-            @if (!$last) { <span class="tree-link"></span> }
+            <span class="tree-link"></span>
+          </div>
+          <div class="window-ellipsis" aria-hidden="true" title="{{ windowStart }} steps hidden">
+            <span>•••</span>
+            <small>{{ windowStart }} hidden</small>
+          </div>
+        }
+
+        @for (item of visibleSteps; track item.index) {
+          <div class="tree-column">
+            <span class="tree-edge">{{ item.action }}</span>
+            <button
+              type="button"
+              class="trace-step"
+              [class.active]="selectedStep === item.index"
+              [class.goal]="item.index === path.length - 1"
+              (click)="selectStepFromTree(item.index)"
+            >
+              <span>Step {{ item.index }}</span>
+              <div class="mini-board">
+                @for (tile of item.state; track $index) {
+                  <i [class.empty]="tile === 0">{{ tile || '' }}</i>
+                }
+              </div>
+            </button>
+            @if (item.index < path.length - 1 && (!isWindowed || item.index < windowEnd)) {
+              <span class="tree-link"></span>
+            }
+          </div>
+        }
+
+        @if (isWindowed && windowEnd < path.length - 1) {
+          <div class="window-ellipsis" aria-hidden="true" title="{{ path.length - 1 - windowEnd }} steps hidden">
+            <span>•••</span>
+            <small>{{ path.length - 1 - windowEnd }} hidden</small>
+          </div>
+          <div class="tree-column window-edge-column">
+            <span class="tree-edge">goal</span>
+            <button type="button" class="trace-step goal window-jump-step" (click)="lastStep()" title="Jump to Goal">
+              <span>Step {{ path.length - 1 }}</span>
+              <div class="mini-board">
+                @for (tile of path[path.length - 1]; track $index) {
+                  <i [class.empty]="tile === 0">{{ tile || '' }}</i>
+                }
+              </div>
+            </button>
           </div>
         }
       </div>
