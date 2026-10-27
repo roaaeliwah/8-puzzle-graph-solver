@@ -8,6 +8,7 @@ import time
 def bfs_search (initial_state) :
     start_time = time.time()
     
+    # Check if the initial puzzle state is solvable before searching
     if not is_solvable(initial_state):
         return SearchResult(
                 solved=False,
@@ -20,7 +21,7 @@ def bfs_search (initial_state) :
             )
     
     seen = set()  # all the states that in the queue or explored
-    q = deque()
+    q = deque()  # FIFO queue explores nodes level by level
     start_node = Node(state=initial_state, parent=None, depth=0, g=0, action=None)
     
     q.append(start_node)
@@ -30,8 +31,9 @@ def bfs_search (initial_state) :
     max_depth = 0
 
     while q :
-        
+        # Pop the oldest node from the front of the queue
         current_node = q.popleft()       
+        # Check if the current state matches the goal
         if is_goal(current_node.state) : 
                 return SearchResult(
                 solved=True,
@@ -45,7 +47,9 @@ def bfs_search (initial_state) :
                 
         nodes_expanded += 1
          
+        # Generate all legal moves (Up, Down, Left, Right)
         for next_action, next_state in get_successors(current_node.state):
+            # Avoid revisiting states that are already explored or queued
             if next_state not in seen :
                 
                 next_node = Node(state=next_state,

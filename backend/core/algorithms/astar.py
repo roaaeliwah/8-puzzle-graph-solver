@@ -12,6 +12,7 @@ from core.puzzle import Node, SearchResult, is_goal, get_successors, is_solvable
 def a_star_search(initial_state, heuristic_func):
     start_time = time.time()
 
+    # Check if the initial puzzle state is solvable before searching
     if not is_solvable(initial_state):
         return SearchResult(
             solved=False,
@@ -24,21 +25,24 @@ def a_star_search(initial_state, heuristic_func):
         )
     start_node = Node(state=initial_state, parent=None, depth=0, g=0, action=None)
     
+    # Priority queue (min-heap) ordered by f(n) = g(n) + h(n)
     frontier = []
     tie_breaker = count() # the older one wins
 
     start_h = heuristic_func(start_node.state)
     heapq.heappush(frontier, (start_node.g + start_h, next(tie_breaker), start_node))
 
+    # Keep track of the lowest cost g(n) found so far for each state
     best_g = {initial_state: 0}
     
     nodes_expanded = 0
     max_depth = 0
     
     while frontier:
-
+        # Pop the node with the lowest f(n) from the frontier
         f_score, _, current_node = heapq.heappop(frontier)
 
+        # Check if the current node is the goal state
         if is_goal(current_node.state):
             return SearchResult(
                 solved=True,
@@ -54,13 +58,12 @@ def a_star_search(initial_state, heuristic_func):
         
         #might be a better approach for the redundant nodes here
         
+        # Generate all legal moves (Up, Down, Left, Right)
         for action, next_state in get_successors(current_node.state):
             new_g = current_node.g + 1 
             new_depth = current_node.depth + 1
             
-            if new_depth > max_depth:
-                max_depth = new_depth
-
+             # Only continue if we found a cheaper path to next_state
             if next_state not in best_g or new_g < best_g[next_state]:
                 best_g[next_state] = new_g
                 
@@ -75,6 +78,7 @@ def a_star_search(initial_state, heuristic_func):
                     action=action
                 )
 
+                # Calculate f(n) = g(n) + h(n) and add the new node to the frontier
                 h_score = heuristic_func(next_state)
                 new_f_score = new_g + h_score
                 
