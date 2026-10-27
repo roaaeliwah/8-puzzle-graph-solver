@@ -12,17 +12,23 @@ export class SolutionPathComponent {
   @Input() comparison: HeuristicComparison | null = null;
   @Input() loading = false;
 
+  copied = false;
+
   protected async copyResults(): Promise<void> {
     if (!this.result) return;
     const text = [
       `Algorithm: ${this.result.algorithm}${this.result.heuristic ? ` (${this.result.heuristic})` : ''}`,
       `Solved: ${this.result.solved}`,
-      `Path cost: ${this.result.cost}`,
-      `Nodes expanded: ${this.result.nodes_expanded}`,
-      `Search depth: ${this.result.max_depth}`,
-      `Running time: ${this.result.running_time} s`,
-      `Path: ${this.path.map((state) => state.join(' ')).join(' -> ')}`,
+      `path to goal: ${this.result.actions ? JSON.stringify(this.result.actions) : '[]'}`,
+      `cost of path: ${this.result.cost}`,
+      `nodes expanded: ${this.result.nodes_expanded}`,
+      `search depth: ${this.result.max_depth}`,
+      `running time: ${this.result.running_time} s`,
     ].join('\n');
     await navigator.clipboard.writeText(text);
+    this.copied = true;
+    setTimeout(() => {
+      this.copied = false;
+    }, 2000);
   }
 }

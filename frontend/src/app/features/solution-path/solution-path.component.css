@@ -5,6 +5,63 @@
 .tree-empty { margin: .2rem 0 .5rem; color: var(--mu); font-size: .9rem; }
 .output-card { padding: .9rem; border: 1px solid #eee3e5; border-radius: .55rem; background: #fffafa; }
 h3 { margin: 0 0 .7rem; color: #8d8997; font-size: .75rem; letter-spacing: .07em; text-transform: uppercase; }
+
+.metrics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .7rem;
+}
+.metrics-header h3 {
+  margin: 0;
+}
+.copy-button {
+  padding: .35rem .65rem;
+  border: 1px solid #9aa9d8;
+  border-radius: .4rem;
+  background: #f7f8ff;
+  color: #40538f;
+  font-size: .72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.copy-button:hover {
+  border-color: #40569f;
+  background: #e9edff;
+  color: #30447f;
+}
+
+.actions-details {
+  margin-top: .75rem;
+  border-top: 1px solid #f0e6eb;
+  padding-top: .6rem;
+  font-size: .76rem;
+  color: #555568;
+}
+.actions-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #5269b8;
+  user-select: none;
+}
+.actions-details summary:hover {
+  color: #40569f;
+}
+.actions-scroll {
+  margin-top: .45rem;
+  max-height: 85px;
+  overflow-y: auto;
+  padding: .5rem .65rem;
+  border-radius: .4rem;
+  background: #f7f2f5;
+  color: #4a4a5a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .72rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
 .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
 .metrics-grid span { display: grid; gap: .25rem; padding: .7rem; border-radius: .45rem; background: #f7f2f5; color: #555568; font-size: .8rem; }
 .metrics-grid b { color: #9a95a3; font-size: .68rem; font-weight: 500; }

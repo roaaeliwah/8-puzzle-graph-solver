@@ -35,3 +35,4 @@ def is_solvable(state):
 
     if inversions % 2 == 1:
         return False
+    return True

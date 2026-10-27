@@ -5,7 +5,12 @@
     <p class="empty-state">Run a search to see the solver metrics.</p>
   } @else if (result) {
     <article class="output-card metrics-card">
-      <h3>Metrics</h3>
+      <div class="metrics-header">
+        <h3>Metrics</h3>
+        <button class="copy-button" type="button" (click)="copyResults()">
+          {{ copied ? '✓ Copied' : 'Copy for report' }}
+        </button>
+      </div>
       <div class="metrics-grid">
         <span><b>Algorithm</b>{{ result.algorithm }}{{ result.heuristic ? ' · ' + result.heuristic : '' }}</span>
         <span><b>Path cost</b>{{ result.cost }}</span>
@@ -13,6 +18,15 @@
         <span><b>Maximum depth</b>{{ result.max_depth }}</span>
         <span><b>Running time</b>{{ result.running_time }} s</span>
       </div>
+
+      @if (result.actions && result.actions.length > 0) {
+        <details class="actions-details">
+          <summary>View path actions ({{ result.actions.length }} moves)</summary>
+          <div class="actions-scroll">
+            <code>{{ result.actions.join(' → ') }}</code>
+          </div>
+        </details>
+      }
     </article>
   }
   @if (comparison) {
