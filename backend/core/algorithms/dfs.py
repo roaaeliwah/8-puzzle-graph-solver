@@ -41,7 +41,7 @@ def dfs_search(initial_state):
                
         nodes_expanded += 1
         
-        for action, state in get_successors(cur.state):
+        for action, state in reversed(list(get_successors(cur.state))):
             if state not in visited:     
                 visited.add(state)
                 stack.append(Node(state=state, parent=cur, depth=cur.depth + 1, g=cur.g+1, action=action))

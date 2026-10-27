@@ -27,7 +27,7 @@ def depth_limited_search(initial_state, limit):
                
         nodes_expanded += 1
         
-        for action, state in get_successors(cur.state):
+        for action, state in reversed(list(get_successors(cur.state))):
             new_depth = cur.depth + 1 
 
             if state not in best_depth or new_depth < best_depth[state]:     
