@@ -29,7 +29,6 @@ class Heuristic(str, Enum):
     manhattan = "manhattan"
     euclidean = "euclidean"
 
-# make sure that the call matches
 class SolveRequest(BaseModel):
     initial_state : List[int]
     algorithm: Algorithm
@@ -39,6 +38,7 @@ class SolveRequest(BaseModel):
     @field_validator('initial_state')
     @classmethod
     def validate_initial_state(cls, v):
+        # Initial state must be a valid permutation of numbers 0 through 8
         if len(v) != 9:
             raise ValueError('initial_state must have exactly 9 elements')
         if sorted(v) != list(range(9)):
@@ -47,6 +47,7 @@ class SolveRequest(BaseModel):
 
     @model_validator(mode="after")
     def heuristic_required_for_astar(self):
+        # Enforce heuristic selection when informed search (A*) is chosen
         if self.algorithm == Algorithm.astar and self.heuristic is None:
             raise ValueError("heuristic is required when algorithm is astar")
         return self
@@ -64,12 +65,9 @@ def run_algorithm(state, algorithm, heuristic):
     if algorithm == Algorithm.bfs:
         return bfs_search(state)
 
-
-
 @app.post("/solve")
-def solve(request:SolveRequest):
-    # enum automatically handles this
-    # raise HTTPException(status_code=400, detail="heuristic must be manhattan or euclidean")
+def solve(request: SolveRequest):
+    # Convert input list to an immutable tuple for hashable state representation
     initial_state = tuple(request.initial_state)
     
     result = run_algorithm(initial_state, request.algorithm, request.heuristic)

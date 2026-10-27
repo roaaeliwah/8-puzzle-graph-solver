@@ -17,11 +17,8 @@ def dfs_search(initial_state):
     
     start_node = Node(state=initial_state, parent=None, depth=0, g=0, action=None)
 
-    # DS: a list as a stack
-    stack = []
-    # DS: set
+    stack = [start_node]
     visited = {initial_state}
-    stack.append(start_node)
     nodes_expanded = 0
     max_depth = 0
 
@@ -41,11 +38,12 @@ def dfs_search(initial_state):
                
         nodes_expanded += 1
         
+        # Reverse successors so LIFO stack pops in Up -> Down -> Left -> Right order
         for action, state in reversed(list(get_successors(cur.state))):
             if state not in visited:     
                 visited.add(state)
                 stack.append(Node(state=state, parent=cur, depth=cur.depth + 1, g=cur.g+1, action=action))
-                max_depth = max(max_depth, cur.depth+1)
+                max_depth = max(max_depth, cur.depth + 1)
 
     return SearchResult(
         solved=False,
@@ -56,8 +54,3 @@ def dfs_search(initial_state):
         max_depth=max_depth,
         running_time=time.time() - start_time
     )
-
-
-
-
-    

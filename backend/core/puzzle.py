@@ -5,9 +5,9 @@ def is_goal(state):
     return state == (0, 1, 2, 3, 4, 5, 6, 7, 8)
 
 def get_successors(state):
+    # Moves describe shifting the blank space (0) in row/column delta order
     moves = (("Up", -1, 0), ("Down", 1, 0), ("Left", 0, -1), ("Right", 0, 1))
     idx = state.index(0)
-    arr = []
 
     r = idx // 3
     c = idx % 3
@@ -22,6 +22,7 @@ def get_successors(state):
             yield action, tuple(new_state)  
       
 def is_solvable(state):
+    # On an odd-width board (3x3), an instance is solvable iff inversion count is even
     inversions = 0 
     for i in range (0,9) :
         if state[i] == 0 :
@@ -34,4 +35,3 @@ def is_solvable(state):
 
     if inversions % 2 == 1:
         return False
-    return True
