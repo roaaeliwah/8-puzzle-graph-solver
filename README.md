@@ -1,6 +1,6 @@
 # 🧩 8-Puzzle Graph Solver & Interactive Visualizer
 
-An end-to-end, high-performance artificial intelligence application for solving and visualizing the classic **8-Puzzle** problem. Built with a **Python (FastAPI)** graph search backend and an interactive **Angular (TypeScript + SVG)** vector frontend.
+An end-to-end, for solving and visualizing the classic **8-Puzzle** problem. Built with a **Python (FastAPI)** graph search backend and an interactive **Angular (TypeScript + SVG)** vector frontend.
 
 ---
 
